@@ -25,6 +25,6 @@ jobs:
 
   build-linux-appimage:
     needs: setup
-    uses: ./.github/workflows/build-linux-appimage.yml
+    uses: ./.github/workflows/build-appimage.yml
     with:
       ci_version: ${{ needs.setup.outputs.ci_version }}
