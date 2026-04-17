@@ -1,41 +1,30 @@
 ---
-name: Build - Steam Link
+name: Build linux
 permissions:
   contents: read
 
 on:
-  workflow_call:
-    inputs:
-      ci_version:
-        required: true
-        type: string
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    env:
-      CI_VERSION: ${{ inputs.ci_version }}
-    runs-on: ubuntu-22.04
-
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      ci_version: ${{ steps.set-ci-version.outputs.ci_version }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v5
-        with:
-          submodules: 'recursive'
-          fetch-depth: 1
+      - name: Set CI version
+        id: set-ci-version
+        shell: bash
+        run: |
+          CI_VERSION=`echo ${GITHUB_SHA} | cut -c1-6`
+          echo "ci_version=${CI_VERSION}" >> "${GITHUB_OUTPUT}"
 
-      - name: Checkout Steam Link SDK
-        uses: actions/checkout@v5
-        with:
-          repository: ValveSoftware/steamlink-sdk
-          path: steamlink-sdk
-          fetch-depth: 1
-
-      - name: Build binaries
-        run: STEAMLINK_SDK_PATH=$PWD/steamlink-sdk scripts/build-steamlink-app.sh
-
-      - name: Upload Binaries
-        uses: actions/upload-artifact@v5
-        with:
-          name: Moonlight-SteamLink-${{ env.CI_VERSION }}
-          path: build/deploy-release/*
-          if-no-files-found: error
+  build-linux-appimage:
+    needs: setup
+    uses: ./.github/workflows/build-linux-appimage.yml
+    with:
+      ci_version: ${{ needs.setup.outputs.ci_version }}
