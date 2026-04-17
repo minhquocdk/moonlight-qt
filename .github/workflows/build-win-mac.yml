@@ -17,7 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Chỉ giữ lại cấu hình Windows
           - os: windows-2025
             qt_version: 6.11.0
 
@@ -39,14 +38,7 @@ jobs:
           version: ${{ matrix.qt_version }}
           aqtsource: 'git+https://github.com/miurahr/aqtinstall.git@073e34d7c2ab4ae6961ed7cca690b3abd5ba5a7e'
 
-      - name: Install Qt ARM64 (Windows)
-        uses: jurplel/install-qt-action@v4
-        with:
-          cache: true
-          set-env: false
-          add-tools-to-path: false
-          arch: win64_msvc2022_arm64_cross_compiled
-          version: ${{ matrix.qt_version }}
+      # --- ĐÃ XÓA PHẦN INSTALL QT ARM64 Ở ĐÂY ---
 
       - name: Build x64 binaries (Windows)
         shell: cmd
@@ -56,13 +48,7 @@ jobs:
         env:
           QT_PATH: ${{ runner.workspace }}\Qt\${{ matrix.qt_version }}\msvc2022_64\bin
 
-      - name: Build ARM64 binaries (Windows)
-        shell: cmd
-        run: |
-          set "PATH=%QT_PATH%;%PATH%"
-          scripts\build-arch.bat Release arm64
-        env:
-          QT_PATH: ${{ runner.workspace }}\Qt\${{ matrix.qt_version }}\msvc2022_arm64\bin
+      # --- ĐÃ XÓA PHẦN BUILD ARM64 BINARIES Ở ĐÂY ---
 
       - name: Build Package
         shell: pwsh
@@ -76,12 +62,7 @@ jobs:
           path: build/deploy-x64-release/*
           if-no-files-found: error
 
-      - name: Upload Binaries (Windows arm64)
-        uses: actions/upload-artifact@v5
-        with:
-          name: Moonlight-Windows-arm64-${{ env.CI_VERSION }}
-          path: build/deploy-arm64-release/*
-          if-no-files-found: error
+      # --- ĐÃ XÓA PHẦN UPLOAD BINARIES ARM64 Ở ĐÂY ---
 
       - name: Upload Symbols
         uses: actions/upload-artifact@v5
