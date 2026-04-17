@@ -124,6 +124,7 @@ jobs:
           chmod a+x linuxdeployqt
 
       - name: Build Binaries
+        timeout-minutes: 17
         run: |
           sudo ldconfig
           scripts/build-appimage.sh
