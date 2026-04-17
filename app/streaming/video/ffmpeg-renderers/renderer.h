@@ -220,12 +220,12 @@ public:
 
     virtual int getDecoderColorspace() {
         // Rec 601 is default
-        return COLORSPACE_REC_601;
+        return COLORSPACE_REC_709;
     }
 
     virtual int getDecoderColorRange() {
         // Limited is the default
-        return COLOR_RANGE_LIMITED;
+        return COLOR_RANGE_FULL;
     }
 
     virtual int getFrameColorspace(const AVFrame* frame) {
