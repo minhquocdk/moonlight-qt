@@ -51,7 +51,22 @@ jobs:
           ./configure
           make -j$(nproc)
           sudo make install
-
+      - name: Checkout SDL_ttf
+        uses: actions/checkout@v4
+        with:
+          repository: libsdl-org/SDL_ttf
+          ref: release-2.22.0
+          path: deps/SDL_ttf
+          submodules: 'recursive'
+      
+      - name: Build SDL_ttf
+        working-directory: deps/SDL_ttf
+        run: |
+          ./autogen.sh
+          ./configure
+          make -j$(nproc)
+          sudo make install
+          
       - name: Checkout libva
         uses: actions/checkout@v4
         with:
